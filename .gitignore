@@ -11,8 +11,10 @@ dist/
 .next/
 out/
 
-# Uploaded files (local disk storage, MVP)
+# Uploaded candidate files & assets (local disk storage)
+/uploads/
 api/uploads/
+web/public/uploads/
 
 # Logs
 *.log
@@ -27,5 +29,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Prisma
+# Prisma local database storage
 api/src/prisma/*.db
+
+# Ignore Markdown documentation files
+*.md
