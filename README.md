@@ -31,17 +31,32 @@ cd nexiora
 
 ---
 
-### 2. Environment Setup
+### 2. Start PostgreSQL Database Container
+Run Docker Compose from the root directory:
+```bash
+docker-compose up -d
+```
+*This starts the PostgreSQL database container on port `5432` with username `nexiora` and password `nexiora_local_pw`.*
+
+---
+
+### 3. Environment Setup
 
 #### Backend Environment (`api/.env`)
-Copy the template or create `api/.env`:
+Navigate to `api/` and copy `.env.example` to `.env`:
+```bash
+cd api
+cp .env.example .env
+```
+*(On Windows PowerShell: `copy .env.example .env`)*
+
+Ensure your `api/.env` contains the correct database URL matching `docker-compose.yml`:
 ```env
 PORT=4000
 NODE_ENV=development
-DATABASE_URL="postgresql://nexiora_user:nexiora_pass_2026@localhost:5432/nexiora_db?schema=public"
-JWT_SECRET="nexiora_super_secret_jwt_key_change_in_production_2026"
-JWT_EXPIRES_IN="15m"
-JWT_REFRESH_SECRET="nexiora_super_secret_refresh_jwt_key_2026"
+DATABASE_URL="postgresql://nexiora:nexiora_local_pw@localhost:5432/nexiora_dev?schema=public"
+JWT_ACCESS_SECRET="change-me-local-dev-only-access"
+JWT_ACCESS_EXPIRES_IN="15m"
 JWT_REFRESH_EXPIRES_IN="7d"
 CORS_ALLOWED_ORIGINS="http://localhost:3000"
 LOCAL_UPLOAD_DIR="./uploads"
@@ -55,19 +70,10 @@ MAIL_FROM="NEXIORA Talent Solutions <no-reply@nexiora.com>"
 ```
 
 #### Frontend Environment (`web/.env.local`)
-Create `web/.env.local`:
+In `web/`, create `web/.env.local`:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
 ```
-
----
-
-### 3. Start PostgreSQL Database Container
-Run Docker Compose from the root directory:
-```bash
-docker-compose up -d
-```
-*This starts a PostgreSQL database instance on port `5432`.*
 
 ---
 
