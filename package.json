@@ -1,0 +1,19 @@
+{
+  "name": "nexiora",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd api && npm run start:dev",
+    "dev:web": "cd web && npm run dev",
+    "install:all": "cd api && npm install && cd ../web && npm install",
+    "build:api": "cd api && npm run build",
+    "build:web": "cd web && npm run build",
+    "test:api": "cd api && npm run test",
+    "test:api:e2e": "cd api && npm run test:e2e",
+    "test:web": "cd web && npm run test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

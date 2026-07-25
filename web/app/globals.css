@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+/* =====================================================
+   NEXIORA Design System — globals.css
+   Brand colors sampled from nexiora-logo.png
+   ===================================================== */
+
+:root {
+  /* Brand Colors */
+  --nexiora-navy: #122D4E;
+  --nexiora-navy-dark: #0A1B33;
+  --nexiora-gold-start: #B89142;
+  --nexiora-gold-end: #E3BC57;
+  --nexiora-gold-solid: #CFA84C;
+  --nexiora-white: #FFFFFF;
+  --nexiora-off-white: #F7F8FA;
+  --nexiora-slate: #5B6472;
+  --nexiora-slate-light: #8A93A3;
+  --nexiora-border: #E4E7EC;
+
+  /* Semantic Status Colors */
+  --status-success: #2E7D5B;
+  --status-warning: #B8862E;
+  --status-info: #2E6BB8;
+  --status-error: #B8422E;
+  --status-neutral: #5B6472;
+}
+
+@theme inline {
+  /* === Nexiora Brand Colors === */
+  --color-navy: var(--nexiora-navy);
+  --color-navy-dark: var(--nexiora-navy-dark);
+  --color-gold-start: var(--nexiora-gold-start);
+  --color-gold-end: var(--nexiora-gold-end);
+  --color-gold: var(--nexiora-gold-solid);
+  --color-off-white: var(--nexiora-off-white);
+  --color-slate: var(--nexiora-slate);
+  --color-slate-light: var(--nexiora-slate-light);
+  --color-border: var(--nexiora-border);
+
+  /* === Semantic Status Colors === */
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-info: var(--status-info);
+  --color-error: var(--status-error);
+  --color-neutral: var(--status-neutral);
+
+  /* === Typography === */
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  /* === Border Radius === */
+  --radius-card: 12px;
+  --radius-btn: 8px;
+}
+
+/* =====================================================
+   Base Styles
+   ===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  color: var(--nexiora-slate);
+  background-color: var(--nexiora-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-fraunces), Georgia, serif;
+    color: var(--nexiora-navy);
+    line-height: 1.2;
+    font-weight: 700;
+  }
+}
+
+/* =====================================================
+   Utility Classes
+   ===================================================== */
+
+/* Gold gradient background */
+.bg-gold-gradient {
+  background: linear-gradient(135deg, var(--nexiora-gold-start), var(--nexiora-gold-end));
+}
+
+/* Gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, var(--nexiora-gold-start), var(--nexiora-gold-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gold gradient border */
+.border-gold-gradient {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, var(--nexiora-gold-start), var(--nexiora-gold-end)) border-box;
+}
+
+/* Navy focus ring — for accessibility */
+.focus-ring {
+  outline: 2px solid var(--nexiora-navy);
+  outline-offset: 2px;
+}
+
+/* Card base styles */
+.card-base {
+  background: var(--nexiora-white);
+  border: 1px solid var(--nexiora-border);
+  border-radius: var(--radius-card);
+  transition: box-shadow 0.2s ease-out;
+}
+
+.card-base:hover {
+  box-shadow: 0 8px 24px rgba(18, 45, 78, 0.1);
+}
+
+/* Section spacing */
+.section-padding {
+  padding-top: 96px;
+  padding-bottom: 96px;
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+}
+
+/* Container */
+.container-nexiora {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (min-width: 1024px) {
+  .container-nexiora {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+/* Shimmer animation for skeletons */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--nexiora-border) 0%,
+    var(--nexiora-off-white) 50%,
+    var(--nexiora-border) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Framer Motion scroll animation base */
+.motion-hidden {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Focus styles for interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--nexiora-navy);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

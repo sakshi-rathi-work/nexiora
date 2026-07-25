@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment files — never commit real secrets
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+.next/
+out/
+
+# Uploaded files (local disk storage, MVP)
+api/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+pino.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Prisma
+api/src/prisma/*.db

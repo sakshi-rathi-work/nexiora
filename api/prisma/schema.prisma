@@ -1,0 +1,252 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CANDIDATE
+  RECRUITER
+  ADMIN
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  REMOTE
+  HYBRID
+}
+
+enum ExperienceLevel {
+  ENTRY
+  MID
+  SENIOR
+  LEAD
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  SHORTLISTED
+  INTERVIEW
+  OFFERED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ContactSubmissionStatus {
+  NEW
+  READ
+  RESPONDED
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique @db.VarChar(255)
+  passwordHash    String   @db.VarChar(255)
+  firstName       String   @db.VarChar(100)
+  lastName        String   @db.VarChar(100)
+  role            Role     @default(CANDIDATE)
+  isEmailVerified Boolean  @default(false)
+  avatarUrl       String?
+  phone           String?  @db.VarChar(20)
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  updatedAt       DateTime @updatedAt @db.Timestamptz
+
+  candidateProfile       CandidateProfile?
+  applications           Application[]
+  refreshTokens          RefreshToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens    PasswordResetToken[]
+  postedJobs             Job[]
+  auditLogs              AuditLog[]
+
+  @@map("users")
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @db.VarChar(255)
+  expiresAt DateTime  @db.Timestamptz
+  usedAt    DateTime? @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tokenHash])
+  @@map("email_verification_tokens")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @db.VarChar(255)
+  expiresAt DateTime  @db.Timestamptz
+  usedAt    DateTime? @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tokenHash])
+  @@map("password_reset_tokens")
+}
+
+model RefreshToken {
+  id         String    @id @default(uuid())
+  userId     String
+  tokenHash  String    @db.VarChar(255)
+  deviceInfo String?
+  expiresAt  DateTime  @db.Timestamptz
+  revokedAt  DateTime? @db.Timestamptz
+  createdAt  DateTime  @default(now()) @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+model CandidateProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  headline        String?  @db.VarChar(200)
+  summary         String?
+  location        String?  @db.VarChar(150)
+  skills          String[] @default([])
+  experienceYears Int?     @db.SmallInt
+  resumeUrl       String?
+  linkedinUrl     String?
+  portfolioUrl    String?
+  updatedAt       DateTime @updatedAt @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("candidate_profiles")
+}
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(200)
+  logoUrl     String?
+  website     String?
+  industry    String?  @db.VarChar(100)
+  description String?
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz
+
+  jobs Job[]
+
+  @@map("companies")
+}
+
+model Job {
+  id              String          @id @default(uuid())
+  companyId       String
+  title           String          @db.VarChar(200)
+  slug            String          @unique @db.VarChar(220)
+  description     String
+  location        String          @db.VarChar(150)
+  employmentType  EmploymentType
+  experienceLevel ExperienceLevel
+  salaryMin       Int?
+  salaryMax       Int?
+  skills          String[]        @default([])
+  status          JobStatus       @default(DRAFT)
+  postedById      String
+  expiresAt       DateTime?       @db.Timestamptz
+  createdAt       DateTime        @default(now()) @db.Timestamptz
+  updatedAt       DateTime        @updatedAt @db.Timestamptz
+
+  company      Company       @relation(fields: [companyId], references: [id])
+  postedBy     User          @relation(fields: [postedById], references: [id])
+  applications Application[]
+
+  @@index([status])
+  @@index([location])
+  @@map("jobs")
+}
+
+model Application {
+  id          String            @id @default(uuid())
+  jobId       String
+  candidateId String
+  resumeUrl   String
+  coverLetter String?
+  status      ApplicationStatus @default(SUBMITTED)
+  appliedAt   DateTime          @default(now()) @db.Timestamptz
+  updatedAt   DateTime          @updatedAt @db.Timestamptz
+
+  job       Job  @relation(fields: [jobId], references: [id])
+  candidate User @relation(fields: [candidateId], references: [id])
+
+  @@unique([jobId, candidateId])
+  @@map("applications")
+}
+
+model Testimonial {
+  id          String   @id @default(uuid())
+  authorName  String   @db.VarChar(150)
+  authorRole  String?  @db.VarChar(150)
+  companyName String?  @db.VarChar(150)
+  quote       String
+  rating      Int?     @db.SmallInt
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz
+
+  @@map("testimonials")
+}
+
+model SuccessStory {
+  id            String   @id @default(uuid())
+  title         String   @db.VarChar(200)
+  slug          String   @unique @db.VarChar(220)
+  summary       String
+  body          String
+  coverImageUrl String?
+  isPublished   Boolean  @default(false)
+  createdAt     DateTime @default(now()) @db.Timestamptz
+
+  @@map("success_stories")
+}
+
+model ContactSubmission {
+  id        String                  @id @default(uuid())
+  name      String                  @db.VarChar(150)
+  email     String                  @db.VarChar(255)
+  phone     String?                 @db.VarChar(20)
+  subject   String                  @db.VarChar(200)
+  message   String
+  status    ContactSubmissionStatus @default(NEW)
+  createdAt DateTime                @default(now()) @db.Timestamptz
+
+  @@map("contact_submissions")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  action     String   @db.VarChar(100)
+  entityType String   @db.VarChar(50)
+  entityId   String?  @db.Uuid
+  metadata   Json?
+  createdAt  DateTime @default(now()) @db.Timestamptz
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@map("audit_logs")
+}
