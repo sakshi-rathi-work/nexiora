@@ -32,5 +32,6 @@ Thumbs.db
 # Prisma local database storage
 api/src/prisma/*.db
 
-# Ignore Markdown documentation files
+# Ignore Markdown internal documentation files except public README.md
 *.md
+!README.md
